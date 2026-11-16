@@ -30,14 +30,14 @@ const pageOrder = [
 
 
 const audioMap = {
-  OpenPage: 'https://cdn.jsdelivr.net/gh/ys216899/doodle-sounds/openpage_music.mp3',
-  EndPage: 'https://cdn.jsdelivr.net/gh/ys216899/doodle-sounds/endpage_music.mp3',
-  '0cLrW719LZuvIwaxQkUd': 'https://cdn.jsdelivr.net/gh/ys216899/doodle-sounds/tang_bgm.mp3',
-  'bVGP7yOceFZC15z8MBVs': 'https://cdn.jsdelivr.net/gh/ys216899/doodle-sounds/song_bgm.mp3',
-  'Q1oXbLfen3tkHxZXAWsS': 'https://cdn.jsdelivr.net/gh/ys216899/doodle-sounds/yuan_bgm.mp3',
-  'P4maFlRPrBQ0HctbjBUV': 'https://cdn.jsdelivr.net/gh/ys216899/doodle-sounds/ming_bgm.mp3',
-  'f2g7EQ1rHj5m6Bh3uKi1': 'https://cdn.jsdelivr.net/gh/ys216899/doodle-sounds/qing_bgm.mp3',
-  'oqc1NPJUzW8oxAb6sY2d': 'https://cdn.jsdelivr.net/gh/ys216899/doodle-sounds/republic_bgm.mp3'
+  OpenPage: 'https://ys216899.github.io/doodle-sounds/openpage_music.mp3',
+  EndPage: 'https://ys216899.github.io/doodle-sounds/endpage_music.mp3',
+  '0cLrW719LZuvIwaxQkUd': 'https://ys216899.github.io/doodle-sounds/tang_bgm.mp3',
+  'bVGP7yOceFZC15z8MBVs': 'https://ys216899.github.io/doodle-sounds/song_bgm.mp3',
+  'Q1oXbLfen3tkHxZXAWsS': 'https://ys216899.github.io/doodle-sounds/yuan_bgm.mp3',
+  'P4maFlRPrBQ0HctbjBUV': 'https://ys216899.github.io/doodle-sounds/ming_bgm.mp3',
+  'f2g7EQ1rHj5m6Bh3uKi1': 'https://ys216899.github.io/doodle-sounds/qing_bgm.mp3',
+  'oqc1NPJUzW8oxAb6sY2d': 'https://ys216899.github.io/doodle-sounds/republic_bgm.mp3'
 };
 
 
