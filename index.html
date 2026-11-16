@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>《千年瓷都：瓷韵纪年》 Jingdezhen: A Ceramic Journey Through Time</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<link rel="stylesheet" href="./style.css">
+
+  </head>
+    
+  <body>
+  <html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>《千年瓷都：瓷韵纪年》
+Jingdezhen: A Ceramic Journey Through Time</title>
+  
+  
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  
+  
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+  <div id="app">
+    
+    <div class="header">
+      <h1 class="page-title">{{ pageTitle }}</h1>
+      <div class="user-avatar" v-if="isLoggedIn">
+        <img :src="avatarUrl" class="avatar-img" alt="User Avatar">
+        <span class="user-name">{{ userName }}</span>
+      </div>
+    </div>
+    
+    
+    <div class="loading-overlay" v-if="isLoading">
+      <div class="loader"></div>
+    </div>
+    
+    
+    <div class="content-wrapper" :class="transitionState">
+      
+      <div class="page" v-if="currentPageId === 'OpenPage'">
+        <div class="main-content">
+          <div class="description-container">
+            <div class="description" v-html="pageData.description"></div>
+            <div class="actions">
+              <button class="btn primary-btn" @click="goToLogin" v-if="showLoginButton">
+                开始探索 · Start Exploring
+              </button>
+            </div>
+          </div>
+          <div class="gallery-container">
+            <div class="image-gallery">
+              <div class="image-item" v-for="(image, index) in pageData.imageData" :key="index" @click="openModal(image)">
+                <img :src="image.url" :alt="image.caption">
+                <div class="image-caption">{{ image.caption }}</div>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      
+      <div class="page" v-if="currentPageId === 'Login'">
+        <div class="login-container">
+          <h2 class="login-title">登录 · Login</h2>
+          <div class="input-group">
+            <label class="input-label">姓名 · Name</label>
+            <input type="text" v-model="userName" class="text-input" placeholder="请输入您的名字 · Enter your name">
+          </div>
+          
+          <div class="avatar-selection">
+  <img 
+    src="https://cdn.jsdelivr.net/gh/ys216899/virtual-avatars/avatar_cat.PNG" 
+    class="avatar-option" 
+    :class="{ 'selected': avatarUrl === 'https://cdn.jsdelivr.net/gh/ys216899/virtual-avatars/avatar_cat.PNG' }" 
+    @click="selectAvatar('https://cdn.jsdelivr.net/gh/ys216899/virtual-avatars/avatar_cat.PNG')">
+  <img 
+    src="https://cdn.jsdelivr.net/gh/ys216899/virtual-avatars/avatar_female.PNG" 
+    class="avatar-option" 
+    :class="{ 'selected': avatarUrl === 'https://cdn.jsdelivr.net/gh/ys216899/virtual-avatars/avatar_female.PNG' }" 
+    @click="selectAvatar('https://cdn.jsdelivr.net/gh/ys216899/virtual-avatars/avatar_female.PNG')">
+  <img 
+    src="https://cdn.jsdelivr.net/gh/ys216899/virtual-avatars/avatar_male.PNG" 
+    class="avatar-option" 
+    :class="{ 'selected': avatarUrl === 'https://cdn.jsdelivr.net/gh/ys216899/virtual-avatars/avatar_male.PNG' }" 
+    @click="selectAvatar('https://cdn.jsdelivr.net/gh/ys216899/virtual-avatars/avatar_male.PNG')">
+</div>
+
+          
+          <button class="btn primary-btn" @click="handleLogin">确认 · Confirm</button>
+        </div>
+      </div>
+      
+      
+<div class="page" v-if="currentPageId === 'PreQuiz'">
+  <div class="quiz-container">
+    <h2 class="quiz-title">前测验 · Pre-Quiz</h2>
+
+    <div v-if="currentQuiz">
+      <quiz-question 
+        :quiz="currentQuiz" 
+        :answered="quizAnswered" 
+        :selectedOption="selectedOption" 
+        :correct="quizCorrect"
+        @answer="answerPreQuiz"
+        @openImage="openModal">
+      </quiz-question>
+
+      <div class="countdown" v-if="quizAnswered">
+        {{ quizCountdown }}秒后继续 · Continue in {{ quizCountdown }} seconds
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+      
+      <div class="page" v-if="currentPageId === 'Timeline'">
+        <div class="timeline-container">
+          <h2 class="timeline-title">时间线 · Timeline</h2>
+          
+          <div class="timeline">
+            <div 
+              v-for="dynasty in dynastyLabels" 
+              :key="dynasty.name"
+              class="timeline-item"
+              :class="dynasty.color"
+               @click="goToEraById(dynasty.id)">
+              <div class="dynasty-name">
+                <span class="chinese">{{ dynasty.name }}</span>
+                <span class="english">{{ dynasty.en }}</span>
+              </div>
+              <div class="dynasty-years">{{ dynasty.years }}</div>
+            </div>
+          </div>
+          
+          <div class="timeline-actions">
+            <button class="btn secondary-btn" @click="goToFinalQuiz">
+              跳到测验 · Skip to Quiz
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      
+      <div class="page dynasty-page" v-if="isDynastyPage">
+        <div class="main-content">
+          <div class="description-container">
+            <div class="description" v-html="pageData.description"></div>
+            <div class="dynasty-actions">
+              <button class="btn nav-btn" @click="goToPreviousEra" v-if="showPrev">
+                上一朝代 · Previous Dynasty
+              </button>
+              <button class="btn nav-btn" @click="goToNextEra" v-if="showNext">
+                下一朝代 · Next Dynasty
+              </button>
+              <button class="btn secondary-btn" @click="goToTimeline" v-if="showBackToTimeline">
+                返回时间线 · Back to Timeline
+              </button>
+              <button class="btn primary-btn" @click="goToFinalQuiz" v-if="showEnd">
+                进行测验 · Take Quiz
+              </button>
+            </div>
+          </div>
+          
+          <div class="gallery-container">
+            <div class="image-gallery">
+              <div class="image-item" v-for="(image, index) in pageData.imageData" :key="index" @click="openModal(image)">
+                <img :src="image.url" :alt="image.caption">
+                <div class="image-caption">{{ image.caption }}</div>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      
+<div class="page" v-if="currentPageId === 'FinalQuiz'">
+  <div class="quiz-container">
+    <h2 class="quiz-title">最终测验 · Final Quiz</h2>
+
+    <div class="quiz-progress">
+      问题 · Question {{ finalQuizIndex + 1 }}/{{ finalQuizCount }}
+    </div>
+
+    <div v-if="currentQuiz && !finalQuizCompleted">
+      <quiz-question 
+        :quiz="currentQuiz" 
+        :answered="quizAnswered" 
+        :selectedOption="selectedOption" 
+        :correct="quizCorrect"
+        @answer="answerFinalQuiz"
+        @openImage="openModal">
+      </quiz-question>
+    </div>
+
+    <div class="quiz-summary" v-if="finalQuizCompleted">
+      <h3 class="summary-title">测验完成 · Quiz Completed</h3>
+      <div class="score">
+        得分 · Score: {{ quizScore }}/{{ finalQuizCount }}
+      </div>
+    </div>
+  </div>
+</div>
+
+
+      
+      
+      <div class="page" v-if="currentPageId === 'EndPage'">
+        <div class="end-container">
+          <div class="main-content">
+            <div class="description-container">
+              <div class="description" v-html="pageData.description"></div>
+              
+              <div class="user-stats">
+                <h3 class="stats-title">您的旅程 · Your Journey</h3>
+                <div class="stat-item">
+                  <span class="stat-label">得分 · Score:</span>
+                  <span class="stat-value">{{ quizScore }}/3</span>
+                </div>
+                <div class="stat-item" v-if="userRank">
+                  <span class="stat-label">排名 · Rank:</span>
+                  <span class="stat-value">{{ userRank }}/{{ totalUsers }}</span>
+                </div>
+                <div class="stat-item" v-if="userFavoriteDynasty">
+                  <span class="stat-label">您最喜欢的朝代 · Your Favorite Dynasty:</span>
+                  <span class="stat-value">{{ userFavoriteDynasty }}</span>
+                </div>
+                <div class="stat-item" v-if="similarUsers">
+                  <span class="stat-label">和您有同样选择的人数 · People with same choice:</span>
+                  <span class="stat-value">{{ similarUsers }}</span>
+                </div>
+              </div>
+              
+              <div class="favorite-dynasty" v-if="!userFavoriteDynasty">
+                <h3 class="section-title">选择您最喜欢的朝代 · Choose Your Favorite Dynasty</h3>
+                <div class="dynasty-selection">
+                  <button 
+                    v-for="dynasty in dynastyLabels" 
+                    :key="dynasty.name"
+                    class="dynasty-option" 
+                    :class="[dynasty.color, { 'selected': selectedFavoriteDynasty === dynasty.name }]"
+                    @click="selectFavoriteDynasty(dynasty.name)">
+                    {{ dynasty.name }} ({{ dynasty.en }})
+                  </button>
+                </div>
+                <button class="btn primary-btn" @click="submitFavoriteDynasty">
+                  提交 · Submit
+                </button>
+              </div>
+              
+              <div class="feedback-section">
+                <h3 class="section-title">您的反馈 · Your Feedback</h3>
+                <textarea 
+                  v-model="userFeedback" 
+                  class="feedback-input" 
+                  placeholder="请留下您的感想... · Please leave your thoughts..."></textarea>
+                <button class="btn primary-btn" @click="submitFeedback">
+                  提交反馈 · Submit Feedback
+                </button>
+              </div>
+              
+              <div class="end-actions">
+                <button class="btn primary-btn" @click="goToOpen" v-if="showRestart">
+                  重新开始 · Restart
+                </button>
+              </div>
+            </div>
+            
+            <div class="gallery-container">
+              <div class="image-gallery" v-if="pageData.imageData">
+                <div class="image-item" v-for="(image, index) in pageData.imageData" :key="index" @click="openModal(image)">
+                  <img :src="image.url" :alt="image.caption">
+                  <div class="image-caption">{{ image.caption }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="music-player" v-if="audioPlayer">
+      <button class="player-button" @click="toggleAudio">
+        {{ isPlaying ? '暂停 · Pause' : '播放 · Play' }}
+      </button>
+      <div class="volume-control">
+        <span class="volume-label">音量 · Volume</span>
+        <input type="range" min="0" max="1" step="0.01" v-model="volume" @change="updateVolume" class="volume-slider">
+      </div>
+      <div class="progress-container progress-bar">
+  <div class="progress-bar-fill" :style="{ width: audioProgress + '%' }"></div>
+</div>
+
+    </div>
+    
+    
+    <div class="modal" v-if="showModal" @click="closeModal">
+      <div class="modal-content" @click.stop>
+        <img :src="modalImage.url" :alt="modalImage.caption" class="modal-image">
+        <div class="modal-caption">{{ modalImage.caption }}</div>
+        <button class="modal-close" @click="closeModal">×</button>
+      </div>
+    </div>
+    
+    
+    <div class="toast-container">
+      <div 
+        v-for="toast in toasts" 
+        :key="toast.id" 
+        class="toast"
+        :class="toast.type">
+        {{ toast.message }}
+      </div>
+    </div>
+  </div>
+  
+ 
+</body>
+</html>
+    <script src='https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js'></script>
+<script src='https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/vue@3.4.15/dist/vue.global.prod.js'></script><script  src="./script.js"></script>
+
+  </body>
+  
+</html>
