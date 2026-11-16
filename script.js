@@ -811,7 +811,7 @@ app.component('quiz-question', {
         <img :src="quiz.imageUrl" alt="Quiz Image" @click="$emit('openImage', {url: quiz.imageUrl, caption: quiz.question})">
       </div>
       <div class="quiz-options">
-        <div v-for="(option, idx) in quiz.options" :key="idx"
+        <div v-for="(option, idx) in (quiz.options || Object.entries(quiz).find(([key]) => key.trim() === 'options')?.[1] || [])" :key="idx"
           class="quiz-option btn btn-primary"
           :class="{
             'selected': selectedOption === option,
