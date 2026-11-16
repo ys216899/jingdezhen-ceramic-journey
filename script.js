@@ -42,9 +42,9 @@ const audioMap = {
 
 
 const avatarUrls = {
-  cat: 'https://cdn.jsdelivr.net/gh/ys216899/virtual-avatars/avatar_cat.PNG',
-  female: 'https://cdn.jsdelivr.net/gh/ys216899/virtual-avatars/avatar_female.PNG',
-  male: 'https://cdn.jsdelivr.net/gh/ys216899/virtual-avatars/avatar_male.PNG'
+  cat: 'https://ys216899.github.io/virtual-avatars/avatar_cat.PNG',
+  female: 'https://ys216899.github.io/virtual-avatars/avatar_female.PNG',
+  male: 'https://ys216899.github.io/virtual-avatars/avatar_male.PNG'
 };
 
 
